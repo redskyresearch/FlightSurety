@@ -81,3 +81,9 @@ to this compiling code:
 `//mapping(uint8 => address[]) responses;`   
 `}`  
 `mapping(bytes32 => mapping(uint8 => address[])) private oracleResponsesByKeyAndStatusCode;` 
+Borrowed package.json Note: Also, I battled with the 3 year out of date package.json and 'scaffolding' for 6 hours.
+
+Finally, I found a package.json that worked, thank the almighty.
+
+I took it from here:
+https://github.com/cfagena/FlightSurety.git
