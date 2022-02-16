@@ -62,6 +62,7 @@ TypeError: Types in storage containing (nested) mappings cannot be assigned to.
 143 |         oracleResponseInfoByKey[key] = ResponseInfo({
 |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^``
 ```
+Borrowed Code Note: 
 Through Udacity Knowledge system, I found this updated coded repo from Jasper V and updated my
 ResponseInfo object in two places as follows:
 https://github.com/yarode/FlightSurety/commit/cd75f8017e769280d7216ffb3603d97f3903552f
