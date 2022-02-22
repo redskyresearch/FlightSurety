@@ -182,5 +182,6 @@ Insurance payouts are not sent directly to passenger’s wallet
 --> Update flight status requests from client Dapp result in OracleRequest event emitted by Smart Contract that is captured by server (displays on console and handled in code)
 
 ###Oracle Functionality  
---> Server will loop through all registered oracles, identify those oracles for which the OracleRequest event applies, and respond by calling into FlightSuretyApp contract with random status code of Unknown (0), On Time (10) or Late Airline (20), Late Weather (30), Late Technical (40), or Late Other (50)
-
+--> Server will loop through all registered oracles, identify those oracles for which the OracleRequest event applies, and respond by calling into FlightSuretyApp contract with random status code of Unknown (0), On Time (10) or Late Airline (20), Late Weather (30), Late Technical (40), or Late Other (50)  
+NOTE:  For randomly selecting a Status for the statuses[] array, I used example code from Stack Overflow
+https://stackoverflow.com/questions/5915096/get-a-random-item-from-a-javascript-array

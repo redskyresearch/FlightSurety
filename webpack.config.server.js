@@ -4,14 +4,11 @@ const nodeExternals = require('webpack-node-externals')
 const StartServerPlugin = require('start-server-webpack-plugin')
 
 module.exports = {
-    entry: [
-        'webpack/hot/poll?1000',
-        './src/server/index'
-    ],
-    watch: true,
+    entry: ['webpack/hot/poll?3000','./src/server/index'],
+    watch: false,
     target: 'node',
     externals: [nodeExternals({
-        whitelist: ['webpack/hot/poll?1000']
+        whitelist: ['webpack/hot/poll?3000']
     })],
     module: {
         rules: [{

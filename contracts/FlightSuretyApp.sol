@@ -150,7 +150,7 @@ contract FlightSuretyApp {
         return indexes;
     }
     function getMyIndexes () view external returns(uint8[3] memory) {
-        require(oracleRegistrationsByAddress[msg.sender].isRegistered, "Not registered as an oracle");
+        require(oracleRegistrationsByAddress[msg.sender].isRegistered, "This Oracle is not REGISTERED");
         return oracleRegistrationsByAddress[msg.sender].indexes;
     }
     function getRandomIndex(address account) internal returns (uint8) {

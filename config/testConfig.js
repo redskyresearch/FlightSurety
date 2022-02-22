@@ -24,8 +24,11 @@ var Config = async function(accounts) {
 
 //    let flightSuretyData = await FlightSuretyData.new();
 //    let flightSuretyApp = await FlightSuretyApp.new();
-    let flightSuretyData = await FlightSuretyData.deployed('0xfE82949Fb4717711Ed2f47227ed4403585603001');
-    let flightSuretyApp = await FlightSuretyApp.deployed('0xdb6C3c3C32866348dEfbD9Ad2180F8f0188c2F8f');
+    let dataAddress = "0xA16fe549128612e7f28322fD29AB6F83056b9a2a";
+    let appAddress =  "0x4F4e14c6A87783fa28F55Fc6C1e90c2a745e2532"
+
+    let flightSuretyData = await FlightSuretyData.deployed(dataAddress);
+    let flightSuretyApp = await FlightSuretyApp.deployed(appAddress);
     
     return {
         owner: owner,
