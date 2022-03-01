@@ -57,11 +57,13 @@ async function registerOracles(){
                 console.log(`${i} registerOracle Failed: ${error.message}`);
                 break;
             }
-//                let indexes = await flightSuretyApp.methods.getMyIndexes().call({from: thisOracle});
-//                console.log("Indexes are " + JSON.stringify(indexes));
-//                                                indexesMap[thisOracle] = [...indexes];
-                /*
-                                                flightSuretyApp.events.OracleRequest({fromBlock: 0, filter: {index: [...indexes]}}, (err, event) => {
+                let indexes = await flightSuretyApp.methods.getMyIndexes().call({from: thisOracle});
+                console.log("Indexes are " + JSON.stringify(indexes));
+                                                indexesMap[thisOracle] = [...indexes];
+
+//            flightSuretyApp.events.OracleRequest({fromBlock: 0, filter: {index: [...indexes]}}, (err, event) => {
+/*
+                flightSuretyApp.events.OracleRequest((err, event) => {
 
                                                     if (err) { console.log(err); }
                                                     let result = event.returnValues;
@@ -69,9 +71,10 @@ async function registerOracles(){
                                                     console.log(`${i} OracleRequest: airline ${result.airline}, flight: ${result.flight}, time: ${result.timestamp}, index: ${result.index}`);
                                                     let randomStatus = _randomStatus();
                                                     console.log(`${i} (${thisOracle} - ${indexesMap[thisOracle]}: replying with ${randomStatus}`);
-                                                    flightSuretyApp.methods.submitOracleResponse(result.index, result.airline, result.flight, result.timestamp, randomStatus).send({from: thisOracle, gas: GAS.toString()});
+//                                                    flightSuretyApp.methods.submitOracleResponse(result.index, result.airline, result.flight, result.timestamp, randomStatus).send({from: thisOracle, gas: GAS.toString()});
                                                 });
-                                */
+*/
+
 
 
 
@@ -126,10 +129,8 @@ function listenForEvents() {
 
 async function startup() {
 
-//    await listenForEvents();
+    await listenForEvents();
     await registerOracles();
-//    await getIndexes();
-
 }
 
 startup().then(console.log("done"));

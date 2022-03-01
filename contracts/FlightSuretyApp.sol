@@ -119,13 +119,14 @@ contract FlightSuretyApp {
         // Require registration fee
         require(msg.value >= REGISTRATION_FEE, "Registration fee is required");
 
-        uint8[3] memory indexes = generateIndexes(msg.sender);
+       uint8[3] memory indexes = generateIndexes(msg.sender);
 
-        oracleRegistrationsByAddress[msg.sender] = OracleRegistration({
-            isRegistered: true,
-            indexes: indexes
-        });
-        emit OracleRegistered(msg.sender);
+                oracleRegistrationsByAddress[msg.sender] = OracleRegistration({
+                    isRegistered: true,
+                    indexes: indexes
+                });
+       emit OracleRegistered(msg.sender);
+
     }
     function isOperational()public pure returns(bool) {
         return true;  // Modify to call data contract's status

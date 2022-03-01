@@ -2,6 +2,16 @@
 
 FlightSurety is a sample application project for Udacity's Blockchain course.
 
+Environment:
+node v16.13.0
+Truffle v5.4.29
+
+##Status
+At the moment, I am stuck. I cannot register Oracles via server.js.  
+I _can_, however, register Oracles via ./test/oracles.js
+
+
+
 ## Install
 
 This repository contains Smart Contract code in Solidity (using Truffle), tests (also using Truffle), dApp scaffolding (using HTML, CSS and JS) and server app scaffolding.
