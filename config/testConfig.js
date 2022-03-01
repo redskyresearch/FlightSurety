@@ -6,6 +6,8 @@ var Config = async function(accounts) {
     
     // These test addresses are useful when you need to add
     // multiple users in test scripts
+
+/*
     let testAddresses = [
         "0x69e1CB5cFcA8A311586e3406ed0301C06fb839a2",
         "0xF014343BDFFbED8660A9d8721deC985126f189F3",
@@ -17,6 +19,8 @@ var Config = async function(accounts) {
         "0xc257274276a4e539741ca11b590b9447b26a8051",
         "0x2f2899d6d35b1a48a4fbdc93a37a72f264a9fca7"
     ];
+*/
+
 
 
     let owner = accounts[0];
@@ -24,17 +28,21 @@ var Config = async function(accounts) {
 
 //    let flightSuretyData = await FlightSuretyData.new();
 //    let flightSuretyApp = await FlightSuretyApp.new();
-    let dataAddress = "0xA16fe549128612e7f28322fD29AB6F83056b9a2a";
-    let appAddress =  "0x4F4e14c6A87783fa28F55Fc6C1e90c2a745e2532"
 
-    let flightSuretyData = await FlightSuretyData.deployed(dataAddress);
+//    let appAddress =  "0x4F4e14c6A87783fa28F55Fc6C1e90c2a745e2532"
+    let appAddress =  "0x4794dDF6a58A712c297807f00253AEf2a8FD6caa"
     let flightSuretyApp = await FlightSuretyApp.deployed(appAddress);
+
+//    let dataAddress = "0xA16fe549128612e7f28322fD29AB6F83056b9a2a";
+    let dataAddress = "0xC97308A77d2b08E4a1714426b2f91253a51b7b01";
+    let flightSuretyData = await FlightSuretyData.deployed(dataAddress);
+
     
     return {
         owner: owner,
         firstAirline: firstAirline,
         weiMultiple: (new BigNumber(10)).pow(18),
-        testAddresses: testAddresses,
+//        testAddresses: testAddresses,
         flightSuretyData: flightSuretyData,
         flightSuretyApp: flightSuretyApp
     }

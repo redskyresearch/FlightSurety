@@ -1,8 +1,9 @@
-// noinspection DuplicatedCode
 import FlightSuretyApp from '../../build/contracts/FlightSuretyApp.json';
 import Config from './config.json';
 import Web3 from 'web3';
 import "babel-polyfill";
+
+import "random";
 
 import express, {request} from 'express';
 
@@ -16,53 +17,86 @@ const STATUS_CODE_LATE_WEATHER = 30;
 const STATUS_CODE_LATE_TECHNICAL = 40;
 const STATUS_CODE_LATE_OTHER = 50;
 
-let GAS = 6721975;
-
+let GAS = 200000;
+let ORACLES_START_INDEX = 1;
 let flightStatuses = [STATUS_CODE_UNKNOWN, STATUS_CODE_ON_TIME, STATUS_CODE_LATE_AIRLINE, STATUS_CODE_LATE_WEATHER, STATUS_CODE_LATE_TECHNICAL, STATUS_CODE_LATE_OTHER];
 
 let config = Config['localhost'];
 let web3 = new Web3(new Web3.providers.WebsocketProvider(config.url.replace('http', 'ws')));
-let oracles = [];
 let flightSuretyApp = new web3.eth.Contract(FlightSuretyApp.abi, config.appAddress);
 
-async function registerOracles(){
+// internal: return a random flight status code
+function _randomStatus()
+{
+    return 10;
+}
 
+async function registerOracles(){
     const accounts = await web3.eth.getAccounts();
-//    web3.eth.getAccounts().then(accounts => {
+    let oracles = [] ;
+    let indexesMap = {};
+        let thisOracle;
         console.log(`There are ${accounts.length} accounts`);
 
-        for (let i = 0; i < NUMBER_OF_TEST_ORACLES; i++) {
-            let account = accounts[i + 1];
-            oracles.push(account);
-            console.log(`Oracle account ${i} is ${oracles[i]}`);
-        }
-        let fee;// = 1 ether;//await flightSuretyApp.methods.REGISTRATION_FEE.call();
-// ACT
-        let result;
-        for (let i = 0; i < oracles.length; i++) {
+        for (let i = ORACLES_START_INDEX; i < NUMBER_OF_TEST_ORACLES + 1; i++) {
+            oracles[i-1] = accounts[i];
+            thisOracle = oracles[i-1];
+            let result;
 
-            console.log(`Registering Oracle ${i}  ${oracles[i]}`);
+            console.log(`Oracle account ${i} is ${thisOracle}`);
+            console.log(`Registering Oracle ${i}  ${thisOracle}`);
             try {
-//            result = await config.flightSuretyApp.registerOracle({from: accounts[a], value: fee});
                 result = await flightSuretyApp.methods.registerOracle().send({
-                    from: oracles[i],
+                    from: thisOracle,
                     value: 1000000000000000000,
-                    gas: 6721975
+                    gas: GAS.toString()
                 });
-
+                console.log("Result is " + JSON.stringify(result));
+                //await new Promise(resolve => setTimeout(resolve, 5000));
             } catch (error) {
                 console.log(`${i} registerOracle Failed: ${error.message}`);
                 break;
             }
+//                let indexes = await flightSuretyApp.methods.getMyIndexes().call({from: thisOracle});
+//                console.log("Indexes are " + JSON.stringify(indexes));
+//                                                indexesMap[thisOracle] = [...indexes];
+                /*
+                                                flightSuretyApp.events.OracleRequest({fromBlock: 0, filter: {index: [...indexes]}}, (err, event) => {
+
+                                                    if (err) { console.log(err); }
+                                                    let result = event.returnValues;
+
+                                                    console.log(`${i} OracleRequest: airline ${result.airline}, flight: ${result.flight}, time: ${result.timestamp}, index: ${result.index}`);
+                                                    let randomStatus = _randomStatus();
+                                                    console.log(`${i} (${thisOracle} - ${indexesMap[thisOracle]}: replying with ${randomStatus}`);
+                                                    flightSuretyApp.methods.submitOracleResponse(result.index, result.airline, result.flight, result.timestamp, randomStatus).send({from: thisOracle, gas: GAS.toString()});
+                                                });
+                                */
+
+
+
         }
-        for (let i = 0; i < oracles.length; i++) {
-            try {
-                result = await flightSuretyApp.methods.getMyIndexes().call({from: oracles[i], gas: GAS.toString()});
-                console.log(`Indexes: ${result[0]}, ${result[1]}, ${result[2]} for Oracle ${i} ${oracles[i]} `);
-            } catch (error) {
-                console.log(error);
-            }
+}
+async function getIndexes(){
+    let oracle;
+
+    for (let i = 0; i < NUMBER_OF_TEST_ORACLES; i++) {
+        oracle = oracles[i];
+        let result;
+
+        console.log(`Getting Index Oracle ${i}  ${oracle}`);
+        try {
+            result = await flightSuretyApp.methods.getMyIndexes().call({
+                from: oracles[i],
+                gas: GAS.toString()
+            });
+            console.log(`Indexes: ${result[0]}, ${result[1]}, ${result[2]} for Oracle ${i} ${oracle} `);
+        } catch (error) {
+            console.log(`${i} getMyIndex Failed: ${error.message}`);
+            return;
         }
+    }
+
 }
 
 function listenForEvents() {
@@ -92,12 +126,13 @@ function listenForEvents() {
 
 async function startup() {
 
-    listenForEvents();
+//    await listenForEvents();
     await registerOracles();
+//    await getIndexes();
 
 }
 
-startup().then(console.log);
+startup().then(console.log("done"));
 const app = express();
 export default app;
 

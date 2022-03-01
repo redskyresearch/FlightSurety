@@ -114,7 +114,7 @@ contract FlightSuretyApp {
     }
 
 
-    event    OracleRegistered(address sender, uint8[3]);
+    event    OracleRegistered(address sender);
     function registerOracle() external  payable {
         // Require registration fee
         require(msg.value >= REGISTRATION_FEE, "Registration fee is required");
@@ -122,10 +122,10 @@ contract FlightSuretyApp {
         uint8[3] memory indexes = generateIndexes(msg.sender);
 
         oracleRegistrationsByAddress[msg.sender] = OracleRegistration({
-        isRegistered: true,
-        indexes: indexes
+            isRegistered: true,
+            indexes: indexes
         });
-        emit OracleRegistered(msg.sender, indexes);
+        emit OracleRegistered(msg.sender);
     }
     function isOperational()public pure returns(bool) {
         return true;  // Modify to call data contract's status
