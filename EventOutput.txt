@@ -1,0 +1,99 @@
+Here is some good code for processing Events
+
+    for(let a=1; a<TEST_ORACLES_COUNT; a++) {
+      let result = await config.flightSuretyApp.registerOracle({ from: accounts[a], value: fee });
+      console.log("Now Pretty Printing it...");
+      // two ways to get Event name
+      console.log("Event Name = " + result.logs[0].event);
+      let obj = JSON.parse(JSON.stringify(result.logs[0]));
+      console.log("Event name is " + obj.event);
+
+      // use truffleAssert to pretty print Events from Result
+      console.log(truffleAssert.prettyPrintEmittedEvents(result, 2));
+
+      // filter only events of OracleRegistered or whatever
+      let events = result.logs.filter((entry) => entry.event === 'OracleRegistered');
+
+      // printing again by object.
+      // the object is useful for getting parameters from the Event, such as Event Name
+      obj = JSON.parse(JSON.stringify(events[0]));
+      console.log("Event name is " + obj.event);
+      // Now lets print the returned args of the Event itself.
+      // This is useful for getting lower level details of the Event
+      // in this case, the Event contains a sender value of the
+      // registerd Oracle
+      let objArgs = JSON.parse(JSON.stringify(events[0].args));
+      console.log("Event args Sender is " + objArgs.sender);
+
+//      let events = result.logs;
+      console.log("Checking if Events is an array");
+      if (Array.isArray(events)) {
+        console.log("Events is an array");
+        console.log("Event length" + events.length);
+        console.log("Event 0 " + JSON.stringify(events[0]));
+
+
+      } else {
+        console.log("Events is NOT an array");
+      }
+
+      let eventArgs = events.map((entry) => entry.args);
+      console.log("EventArgs is " + eventArgs);
+      for(let i = 0; i < eventArgs.length; i++) {
+        console.log("EventArgs[" + i + "] is " + JSON.stringify(eventArgs[i]));
+      }
+
+
+      truffleAssert.eventEmitted(result, 'OracleRegistered', (ev) => {
+        console.log("Received Event -> from " + ev.sender);
+        return ev.sender === accounts[a];
+//        return ev.player === bettingAccount && !ev.betNumber.eq(ev.winningNumber);
+      });
+      result = await config.flightSuretyApp.getMyIndexes.call({from: accounts[a]});
+      console.log(`Oracle Registered: ${result[0]}, ${result[1]}, ${result[2]}`);
+    }
+
+  Contract: Oracles
+Now Pretty Printing it...
+Event Name = OracleRegistered
+Event name is OracleRegistered
+  Events emitted in tx 0x38bb3ae38d57dc111093f8bd17c493fc6a9a7b7489aeb684471691fb3c68f01b:
+  ----------------------------------------------------------------------------------------
+  OracleRegistered(0: 0xdE4ca4C5a8D2a0D957CA1C3460f1eD5230D250f1, 1: 6,1,9, __length__: 2, sender: 0xdE4ca4C5a8D2a0D957CA1C3460f1eD5230D250f1)
+  ----------------------------------------------------------------------------------------
+
+undefined
+Event name is OracleRegistered
+Event args Sender is 0xdE4ca4C5a8D2a0D957CA1C3460f1eD5230D250f1
+Checking if Events is an array
+Events is an array
+Event length1
+Event 0 {"logIndex":0,"transactionIndex":0,"transactionHash":"0x38bb3ae38d57dc111093f8bd17c493fc6a9a7b7489aeb684471691fb3c68f01b","blockHash":"0x2188b76be33806e10dcae8f09390adebe7d511c3e0ad64c84bf8f9f48505a2be","blockNumber":592,"address":"0x8eED8D771c78CeA182F74438891f8c7B5Ed20D88","type":"mined","id":"log_d40b0a83","event":"OracleRegistered","args":{"0":"0xdE4ca4C5a8D2a0D957CA1C3460f1eD5230D250f1","1":["6","1","9"],"__length__":2,"sender":"0xdE4ca4C5a8D2a0D957CA1C3460f1eD5230D250f1"}}
+EventArgs is [object Object]
+EventArgs[0] is {"0":"0xdE4ca4C5a8D2a0D957CA1C3460f1eD5230D250f1","1":["6","1","9"],"__length__":2,"sender":"0xdE4ca4C5a8D2a0D957CA1C3460f1eD5230D250f1"}
+Received Event -> from 0xdE4ca4C5a8D2a0D957CA1C3460f1eD5230D250f1
+Oracle Registered: 6, 1, 9
+
+
+loadOracles(TEST_ORACLES_COUNT);
+
+async function loadOracles (howManyOraclesToLoad) {
+
+    let fee = await config.flightSuretyApp.REGISTRATION_FEE.call();
+
+// ACT
+    for (let a = 1; a < howManyOraclesToLoad; a++) {
+        let result;
+        try {
+            result = await flightSuretyApp.registerOracle({from: web3.eth.accounts[a], value: fee});
+        } catch (error) {
+            console.log(`${a} registerOracle Failed: ${error.message}`);
+            break;
+        }
+        // use truffleAssert to pretty print Events from Result
+//      console.log(truffleAssert.prettyPrintEmittedEvents(result, 2));
+        let events = result.logs.filter((entry) => entry.event === 'OracleRegistered');
+        result = await config.flightSuretyApp.getMyIndexes.call({from: accounts[a]});
+
+    }
+}

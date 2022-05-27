@@ -7,7 +7,7 @@ import "random";
 
 import express, {request} from 'express';
 
-const NUMBER_OF_TEST_ORACLES = 20;
+const NUMBER_OF_TEST_ORACLES = 2;
 
 // Watch contract events
 const STATUS_CODE_UNKNOWN = 0;

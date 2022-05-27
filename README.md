@@ -8,7 +8,7 @@ Truffle v5.4.29
 
 ##Status
 At the moment, I am stuck. I cannot register Oracles via server.js.  
-I _can_, however, register Oracles via ./test/oracles.js
+I _can_, however, register Oracles via ./test/testOracles.js
 
 
 
@@ -25,8 +25,8 @@ To install, download or clone the repo, then:
 
 To run truffle tests:
 
-`truffle test ./test/flightSurety.js`
-`truffle test ./test/oracles.js`
+`truffle test ./test/testMultiPartyConsensusMethods.js`
+`truffle test ./test/testOracles.js`
 
 To use the dapp:
 
@@ -40,7 +40,7 @@ To view dapp:
 ## Develop Server
 
 `npm run server`
-`truffle test ./test/oracles.js`
+`truffle test ./test/testOracles.js`
 
 ## Deploy
 
@@ -87,7 +87,7 @@ I changed this original non-compiling code:
 
 to this compiling code:  
 `struct ResponseInfo {  `  
-`address requester;`
+`address requester;  `
 `bool isOpen;  `                            
 `//mapping(uint8 => address[]) responses;`   
 `}`  

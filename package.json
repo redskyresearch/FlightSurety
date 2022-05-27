@@ -7,15 +7,15 @@
   },
   "scripts": {
     "test": "truffle test",
-    "testf": "truffle test ./test/flightSurety.js",
-    "testfetch": "truffle test ./test/fetchFlightStatus.js --show-events",
-    "testfe": "truffle test ./test/flightSurety.js --show-events",
-    "testo": "truffle test ./test/oracles.js",
-    "testoe": "truffle test ./test/oracles.js --show-events",
+    "testMulti": "truffle test test/testMultiPartyConsensusMethods.js",
+    "testfetch": "truffle test test/testFetchFlightStatus.js --show-events -development",
+    "testfe": "truffle test test/testMultiPartyConsensusMethods.js --show-events",
+    "testo": "truffle test test/testOracles.js",
+    "testoe": "truffle test test/testOracles.js --show-events",
     "dapp": "webpack-dev-server --mode development --config webpack.config.dapp.js",
     "dapp:prod": "webpack --mode production  --config webpack.config.dapp.js",
     "server": "webpack --mode development --config webpack.config.server.js",
-
+    "fetchstatus": "webpack --mode development --config webpack.config.fetchstatus.js --show-events",
     "server2": "rm -rf ./build/server && webpack --mode development --config webpack.config.server.js"
   },
   "author": "Nik Kalyani <nik@kalyani.com> https://www.kalyani.com",
