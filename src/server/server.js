@@ -28,7 +28,7 @@ let flightSuretyApp = new web3.eth.Contract(FlightSuretyApp.abi, config.appAddre
 // internal: return a random flight status code
 function _randomStatus()
 {
-    return 10;
+    return flightStatuses[Math.random()6];
 }
 
 async function registerOracles(){

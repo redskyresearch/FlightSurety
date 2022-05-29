@@ -173,7 +173,8 @@ contract FlightSuretyData {
     *
     * When operational mode is disabled, all write transactions except for this one will fail
     */
-    function setOperatingStatus(bool mode) external requireContractOwner {
+    function setOperatingStatus(bool mode) external //requireContractOwner
+    {
         // no multi consensus required here
         operational = mode;
 

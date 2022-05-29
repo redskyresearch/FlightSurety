@@ -82,7 +82,7 @@ contract('Oracles', async (accounts) => {
             oracleAddress = accounts[iOracles];
             try {
                 console.log(`(${iOracles}) Oracle ${accounts[iOracles]} submitting Response with correct index (${indexForThisFlightStatus})`);
-                let result = await config.flightSuretyApp.submitOracleResponse(indexForThisFlightStatus, config.firstAirline, flight, timestamp, 10, {from: accounts[iOracles]});
+                let result = await config.flightSuretyApp.submitOracleResponse(indexForThisFlightStatus, config.firstAirline, flight, timestamp, 20, {from: accounts[iOracles]});
                 truffleAssert.eventEmitted(result, 'OracleReport', (ev) => {
                     truffleAssert.prettyPrintEmittedEvents(result, 2);
                     console.log("Received OracleReport Event");
