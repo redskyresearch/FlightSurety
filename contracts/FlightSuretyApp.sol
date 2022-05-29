@@ -30,7 +30,7 @@ contract FlightSuretyApp {
         bool isActive; // both isRegisterd and isFunded. Not needed as we can calculate it, but is simple.
     }
 
-    //Airline[] airlines;
+    address[] airlineAddresses;
     mapping(address => Airline) airlines;
     // easy way for m of n once we have more than 4
     uint256 activeAirlinesCount;
@@ -58,7 +58,7 @@ contract FlightSuretyApp {
         // All modifiers require an "_" which indicates where the function body will be added
     }
     modifier requireContractOwner()    {
-        require(msg.sender == contractOwner, "Caller is not contract owner");
+        require(msg.sender == contractOwner, "Caller must be contract owner to make this call.");
         _;
     }
     modifier requireNominatedAirlineIsNotYetRegistered(address airlineAddress) {
@@ -88,17 +88,30 @@ contract FlightSuretyApp {
     /********************************************************************************************/
 
     // implies Data Contract has already been deployed
-    constructor(address dataContractAddress, address firstAirlineAddress){
-        contractOwner = msg.sender;
+    constructor(address _contractOwner, address dataContractAddress, address firstAirlineAddress){
+        contractOwner = _contractOwner;
         dataContract = FlightSuretyData(dataContractAddress);
         _registerAirline(firstAirlineAddress);
     }
 
     function setOperatingStatus(bool mode) external
-    requireContractOwner {
+//    requireContractOwner
+    {
         operational = mode;
+        dataContract.setOperatingStatus(operational);
     }
-
+    function isOperational() public view
+    returns (bool operatingMode)
+    {
+        return operational;
+    }
+    // a simple way to test the isOperational modifier
+    function isOperationalTest() public view
+    requireIsOperational
+    returns (bool operatingMode)
+    {
+        return isOperational();
+    }
     /**
      * Assuming only one registration at a time
      * @dev Add an airline to the registration queue
@@ -165,9 +178,19 @@ contract FlightSuretyApp {
         isRegistered : true
         });
         airlines[newAirlineAddress] = newAirline;
+        airlineAddresses[airlineAddresses.length] = newAirlineAddress;
         emit RegisteredAirline(newAirline);
 
         return (true);
+    }
+    function isAirlineRegistered(address _airline) public view
+    returns (bool bAirlineIsRegistered) {
+        for (uint256 i = 0; i < airlineAddresses.length; i++){
+            if (airlineAddresses[i] == _airline){
+                return true;
+            }
+        }
+        return false;
     }
 
     function fund()
@@ -210,7 +233,10 @@ contract FlightSuretyApp {
     }
 
     // what is the point of this?
-    function registerFlight(address airlineAddress, string memory flightName, uint256 timestamp) external {
+    // is it required that the airline is registered? Makes sense.
+    function registerFlight(address airlineAddress, string memory flightName, uint256 timestamp) external
+    requireIsOperational
+    requireAirlineIsRegistered(airlineAddress) {
         // do we check to see if the flight has already been registered?
         // not a requirement and also idempotent
         bytes32 flightKey = getFlightKey(airlineAddress, flightName, timestamp);
