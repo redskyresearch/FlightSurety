@@ -1,6 +1,7 @@
 var Web3 = require('web3')
 var HDWalletProvider = require("truffle-hdwallet-provider");
-var mnemonic = "candy organ street obscure shed burst tail impulse guess glass chase race";
+//var mnemonic = "candy organ street obscure shed burst tail impulse guess glass chase race";
+var mnemonic = "any ranch rival torch true ahead salon engage guess hybrid left wet";
 
 module.exports = {
   networks: {

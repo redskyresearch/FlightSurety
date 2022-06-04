@@ -6,8 +6,10 @@
     "test": "test"
   },
   "scripts": {
+    "ganache" : "ganache --port 7545 --wallet.totalAccounts 50 --wallet.mnemonic 'any ranch rival torch true ahead salon engage guess hybrid left wet'",
     "test": "truffle test",
     "testIsOperational": "truffle test test/testIsOperational.js",
+    "testAirlines": "truffle test test/testAirlines.js",
     "testMulti": "truffle test test/testMultiPartyConsensusMethods.js",
     "testfetch": "truffle test test/testFetchFlightStatus.js --show-events -development",
     "testfe": "truffle test test/testMultiPartyConsensusMethods.js --show-events",

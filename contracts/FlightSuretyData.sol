@@ -27,6 +27,8 @@ contract FlightSuretyData {
     // map by flightKey to InsurancePolicy array
     mapping(bytes32 => InsurancePolicy[]) private insurancePoliciesByFlightKey;
 
+    mapping(address => uint256) private insuredCreditGiven;
+
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
     /********************************************************************************************/
@@ -45,6 +47,8 @@ contract FlightSuretyData {
      * @dev Buy insurance for a flight
     *
     */
+    event Data_BuyInsurnce(address airline, bytes32 flightKey, address buyer, uint256 amount);
+
     function buyInsurance(address _airline, bytes32 _flightKey)
     external payable
     requireIsOperational {
@@ -57,12 +61,15 @@ contract FlightSuretyData {
         isOpen : true,
         isPaid : false});
         insurancePoliciesByFlightKey[_flightKey].push(ip);
+        emit Data_BuyInsurnce(_airline, _flightKey, msg.sender, msg.value);
     }
 
     /**
      *  @dev Credits payouts to insurees
     */
-    function creditInsureds(bytes32 flightKey) external view
+    event Data_CreditInsureds(bytes32 flightKey);
+
+    function creditInsureds(bytes32 flightKey) external
     requireContractOwner
     requireIsOperational
     {
@@ -79,12 +86,22 @@ contract FlightSuretyData {
                 ip.isOpen = false;
             }
         }
+        emit Data_CreditInsureds(flightKey);
     }
+    function getCreditForInsured(address insuredAddress)
+    external view
+    requireIsOperational
+    returns (uint256){
+        return insuredCreditGiven[insuredAddress];
+    }
+
     /**
      *  @dev Close this flights insurance policies one by one
      Used when the flight has a status which needs not pay out
         */
-    function closeInsurancePolicy(bytes32 flightKey) external view
+
+    event Data_CloseInsurancePolicy(bytes32 flightKey);
+    function closeInsurancePolicy(bytes32 flightKey) external
     requireContractOwner
     requireIsOperational {
 
@@ -95,8 +112,8 @@ contract FlightSuretyData {
             InsurancePolicy memory ip = ipArray[i];
             ip.isOpen = false;
         }
+    emit Data_CloseInsurancePolicy(flightKey);
     }
-
 //    function getInsurancePoliciesByFlightKey(bytes32 flightKey)
 //    public view returns (InsurancePolicy[] calldata){
 
@@ -107,6 +124,7 @@ contract FlightSuretyData {
      *  @dev Transfers eligible payout funds to insuree
      *
     */
+
     function pay(address airlineAddress, bytes32 flightKey, address payable insuredAddress)
         external
         requireContractOwner
@@ -134,11 +152,13 @@ contract FlightSuretyData {
     /**
      * @dev How Airlines fund their participation.
     */
+    event Data_FundingReceived(address airline, uint256 amount);
     function fund(address airlineAddress) public payable
     requireIsOperational {
         // 10 eth is required but checked at interface of the App Contract, not here
         // as business rules may change
         airlineFundingBalances[airlineAddress].add(msg.value);
+        emit Data_FundingReceived(airlineAddress, msg.value);
     }
 
 
@@ -173,10 +193,12 @@ contract FlightSuretyData {
     *
     * When operational mode is disabled, all write transactions except for this one will fail
     */
+    event Data_OperatingStatusSet(bool status);
     function setOperatingStatus(bool mode) external //requireContractOwner
     {
         // no multi consensus required here
         operational = mode;
+        emit Data_OperatingStatusSet(operational);
 
     }
 

@@ -9,7 +9,7 @@ contract FlightSuretyApp {
     address private contractOwner;          // Account used to deploy contract
     //    address private dataContractAddress;
     FlightSuretyData private dataContract;
-    bool operational = true;
+    bool operational = false;
 
 
     uint8 private constant STATUS_CODE_UNKNOWN = 0;
@@ -94,21 +94,25 @@ contract FlightSuretyApp {
         _registerAirline(firstAirlineAddress);
     }
 
-    function setOperatingStatus(bool mode) external
+    function setOperatingStatus(uint256 mode) external
 //    requireContractOwner
     {
-        operational = mode;
+        if (mode > 0) {
+            operational = true;
+        } else {
+            operational = false;
+        }
         dataContract.setOperatingStatus(operational);
     }
     function isOperational() public view
-    returns (bool operatingMode)
+    returns (bool)
     {
         return operational;
     }
     // a simple way to test the isOperational modifier
     function isOperationalTest() public view
     requireIsOperational
-    returns (bool operatingMode)
+    returns (bool)
     {
         return isOperational();
     }
@@ -131,8 +135,8 @@ contract FlightSuretyApp {
     requireIsOperational
     requireNominatingAirlineIsActive(msg.sender)
     requireNominatedAirlineIsNotYetRegistered(airlineAddress)
-    returns (bool success, uint256 votes) {
-
+//    returns (bool success, uint256 votes) {
+    returns (bool) {
         require(!airlines[msg.sender].isRegistered, "Airline is already Registered.");
         // check if it is already registered
 
@@ -156,13 +160,16 @@ contract FlightSuretyApp {
                 mofnConsensusToRegisterAnAirline = new address[](0);
 
                 _registerAirline(airlineAddress);
+                return true;
             }
         }
-        return (success, mofnConsensusToRegisterAnAirline.length);
+//        return (success, mofnConsensusToRegisterAnAirline.length);
+        return (false);
 
     }
 
     event RegisteredAirline(Airline airline);
+    event FundedAirline(address airlineAddress, uint256 amount);
 
     function _registerAirline(address newAirlineAddress)
     private
@@ -170,7 +177,7 @@ contract FlightSuretyApp {
         // and should executed because the call has passed a previous modifier
         // so out it goes
         // requireIsOperational
-    returns (bool success) {
+    returns (bool) {
         Airline memory newAirline = Airline
         ({airlineAddress : newAirlineAddress,
         isActive : false,
@@ -178,15 +185,20 @@ contract FlightSuretyApp {
         isRegistered : true
         });
         airlines[newAirlineAddress] = newAirline;
-        airlineAddresses[airlineAddresses.length] = newAirlineAddress;
+        airlineAddresses.push(newAirlineAddress);
         emit RegisteredAirline(newAirline);
 
         return (true);
     }
-    function isAirlineRegistered(address _airline) public view
-    returns (bool bAirlineIsRegistered) {
-        for (uint256 i = 0; i < airlineAddresses.length; i++){
-            if (airlineAddresses[i] == _airline){
+
+    function getRegisteredAirlines() external view returns (address[] memory){
+        return airlineAddresses;
+    }
+
+    function isAirlineRegistered(address _airline) external view
+    returns (bool) {
+        for (uint256 i = 0; i < airlineAddresses.length; i++) {
+            if (airlineAddresses[i] == _airline) {
                 return true;
             }
         }
@@ -208,6 +220,7 @@ contract FlightSuretyApp {
         }
 
         dataContract.fund{value : msg.value}(msg.sender);
+        emit FundedAirline(msg.sender, msg.value);
     }
 
     function pay(address airlineAddress, string memory flight, uint256 timestamp) external {
@@ -227,6 +240,12 @@ contract FlightSuretyApp {
 //        bytes32 flightKey = getFlightKey(airlineAddress, flight, timestamp);
 //        return dataContract.getInsurancePoliciesByFlightKey(flightKey);
 //    }
+    function getCreditForInsured(address insuredAddress)
+    external view
+    requireIsOperational
+    returns (uint256){
+        return dataContract.getCreditForInsured(insuredAddress);
+    }
 
     function getFlightKey(address airline, string memory flight, uint256 timestamp) pure internal returns (bytes32) {
         return keccak256(abi.encodePacked(airline, flight, timestamp));
@@ -286,7 +305,7 @@ contract FlightSuretyApp {
     * @dev Called after oracle has updated flight status
     *
     */
-    function processFlightStatus(address airline, string memory flight, uint256 timestamp, uint8 statusCode) internal view {
+    function processFlightStatus(address airline, string memory flight, uint256 timestamp, uint8 statusCode) internal  {
         bytes32 flightKey = getFlightKey(airline, flight, timestamp);
         // if status code is not 20, do nothing
         if (statusCode == STATUS_CODE_UNKNOWN) {
