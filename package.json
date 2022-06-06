@@ -10,6 +10,7 @@
     "test": "truffle test",
     "testIsOperational": "truffle test test/testIsOperational.js",
     "testAirlines": "truffle test test/testAirlines.js",
+    "testFundFirstAirline": "truffle test test/testFundFirstAirline.js",
     "testMulti": "truffle test test/testMultiPartyConsensusMethods.js",
     "testfetch": "truffle test test/testFetchFlightStatus.js --show-events -development",
     "testfe": "truffle test test/testMultiPartyConsensusMethods.js --show-events",
