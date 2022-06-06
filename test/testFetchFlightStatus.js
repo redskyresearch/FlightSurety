@@ -1,6 +1,7 @@
 var Test = require('../config/testConfig.js');
 var BigNumber = require('bignumber.js');
 const truffleAssert = require('truffle-assertions');
+const assert = require("assert");
 
 contract('FetchFlightStatus', async (accounts) => {
 
@@ -8,8 +9,18 @@ contract('FetchFlightStatus', async (accounts) => {
     before('setup contract', async () => {
         config = await Test.Config(accounts);
     });
+    console.log("First let's set this to operational.");
+    await config.flightSuretyApp.setOperatingStatus(1);
+    let status = await config.flightSuretyApp.isOperational();
+    assert.equal(status, 1, "Expected isOperation to be TRUE");
 
     it('Test: Request Flight Status', async () => {
+
+
+        // first let's make sure it is operational
+        await config.flightSuretyApp.setOperatingStatus(1);
+        status = await config.flightSuretyApp.isOperational();
+        assert.equal(status, 1, "Expected isOperation to be TRUE");
 
         // ARRANGE
         let flight = 'ND1309'; // Course number

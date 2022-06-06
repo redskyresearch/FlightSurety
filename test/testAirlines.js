@@ -1,42 +1,64 @@
 const Test = require('../config/testConfig.js');
-const truffleAssert = require('truffle-assertions');
+//const truffleAssert = require('truffle-assertions');
 const assert = require("assert");
 
 
-contract('testIsFirstAirlineRegistered', async (accounts) => {
+contract('testAirlines', async (accounts) => {
 
-    //  var config;
+    let config;
     before('setup contract', async () => {
         config = await Test.Config(accounts);
     });
 
-    it(`Check if first airline is registered`, async function () {
-        // Get operating status
-        console.log("Checking to see if " + accounts[1] + " is registered after deployment.");
-        let status = await config.flightSuretyApp.isAirlineRegistered(accounts[1]);
-        assert.equal(status, true, "Expected isAirlineRegistered to be TRUE");
- });
-    it(`Now Try to register another Airline before funding - must fail`, async function () {
-        // Get operating status
-        console.log(accounts[1] + " will try to register " + accounts[2] + " and fail due to not having funded yet");
-        let status = await config.flightSuretyApp.registerAirline(accounts[2], {from:accounts[1]});
-        assert.equal(status, false, "Expected register to fail due to no funding yet");
+    await it(`Check if first airline is REGISTERED after deployment`, async function () {
+        let message = "Checking to see if " + accounts[1] + " is registered after deployment.";
+        console.log(message);
+        let result = await config.flightSuretyApp.isAirlineRegistered.call(accounts[1]);
+        console.log(message + " >>>Result is " + result);
+        assert.equal(result, true, "Expected isAirlineRegistered to be TRUE");
     });
 
-    it(`Now Fund first airline and get Active`, async function () {
+    await it(`Test PARTICIPATION Before Funding Airline 1, have it Register Another Airline - should not work`, async function () {
 
-//        await config.flightSuretyApp.getPastEvents( 'ActiveAirline', { fromBlock: 0, toBlock: 'latest' } );
+        let shouldFail = false;
+        try {
+            await config.flightSuretyApp.registerAirline(accounts[2], {from:accounts[1]});
+        } catch(e) {
+            shouldFail = true;
+        }
+        assert.equal(shouldFail, true, "Register should have failed due to no funding yet");
+    });
+
+    await it(`FUND the First Airline to become ACTIVE`, async function () {
+        let message = "STEP 2 FUND account " + accounts[1];
         let ante = web3.utils.toWei("10", "ether");
-        let result = await config.flightSuretyApp.fund({from:accounts[1], value:ante});
-        truffleAssert.prettyPrintEmittedEvents(result, 2);
+        console.log(message + " with this many WEI " + ante);
+
+        let shouldSucceed = true;
+        try {
+            await config.flightSuretyApp.fundAirline({from:accounts[1], value:ante});
+        } catch (e){
+            console.log("Exception caught " + e);
+            shouldSucceed = false;
+        }
+        assert.equal(shouldSucceed, true, "Funding should have worked");
+
+        let result = await config.flightSuretyApp.isAirlineFunded(accounts[1]);
+
+        console.log("result is " + result + " result[0] = " + result[0]);
+        assert.equal(result, true, "Airline Should have been Funded");
     });
-
-    // it(`Register 3 more airlines - look for Events`, async function () {
-    //     // Get operating status
-    //     console.log("Registering new Airline: " + accounts[2]);
-    //     let status = await config.flightSuretyApp.registerAirline(accounts[2], {from:accounts[1]});
-    //     assert.equal(status, true, "Expected Registration SUCCESS.");
+    //
+    // await it(`Test PARTICIPATION AFTER Funding Airline 1, should work`, async function () {
+    //     let message = "STEP 3 " + accounts[1] + " will register " + accounts[2] + " and succeed since it is funded";
+    //     console.log(message);
+    //     let success = true;
+    //     try {
+    //         await config.flightSuretyApp.registerAirline(accounts[2], {from:accounts[1]});
+    //     } catch (e) {
+    //         success = false;
+    //     }
+    //     assert.equal(success, true, "Registering Airline should have worked.");
     // });
-
 
 });

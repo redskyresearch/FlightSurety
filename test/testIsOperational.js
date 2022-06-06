@@ -11,15 +11,23 @@ contract('testIsOperational', async (accounts) => {
     });
 
     it(`Set and Check operational status`, async function () {
+
         // Get operating status
-        await config.flightSuretyApp.setOperatingStatus(true);
+        // set up as false to start, so let's confirm that
         let status = await config.flightSuretyApp.isOperational();
-        assert.equal(status, true, "Expected isOperation to be TRUE");
+        assert.equal(status, false, "Expected isOperation to be FALSE on startup");
 
-
-        await config.flightSuretyApp.setOperatingStatus(false);
+        await config.flightSuretyApp.setOperatingStatus(1);
         status = await config.flightSuretyApp.isOperational();
-        assert.equal(status, false, "Expected isOperation to be FALSE");
+        assert.equal(status, 1, "Expected isOperation to be TRUE");
 
+
+        await config.flightSuretyApp.setOperatingStatus(0);
+        status = await config.flightSuretyApp.isOperational();
+        assert.equal(status, 0, "Expected isOperation to be FALSE");
+
+        await config.flightSuretyApp.setOperatingStatus(1);
+        status = await config.flightSuretyApp.isOperational();
+        assert.equal(status, 1, "Expected isOperation to be TRUE");
     });
 });

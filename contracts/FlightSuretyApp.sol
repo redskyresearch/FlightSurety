@@ -9,7 +9,7 @@ contract FlightSuretyApp {
     address private contractOwner;          // Account used to deploy contract
     //    address private dataContractAddress;
     FlightSuretyData private dataContract;
-    bool operational = false;
+    bool operational = true;
 
 
     uint8 private constant STATUS_CODE_UNKNOWN = 0;
@@ -50,38 +50,7 @@ contract FlightSuretyApp {
         uint8[3] indexes;
     }
 
-    modifier requireIsOperational()     {
-        // used on all state changing functions
-        // Modify to call data contract's status
-        require(operational == true, "Contract is currently not operational");
-        _;
-        // All modifiers require an "_" which indicates where the function body will be added
-    }
-    modifier requireContractOwner()    {
-        require(msg.sender == contractOwner, "Caller must be contract owner to make this call.");
-        _;
-    }
-    modifier requireNominatedAirlineIsNotYetRegistered(address airlineAddress) {
-        require(!airlines[airlineAddress].isRegistered, "Airline must not yet be REGISTERED.");
-        _;
-    }
-    modifier requireAirlineIsFunded(address airlineAddress) {
-        require(airlines[airlineAddress].isFunded, "Airline must be FUNDED to make this call.");
-        _;
-    }
-    modifier requireAirlineIsRegistered(address airlineAddress) {
-        require(airlines[airlineAddress].isRegistered, "Airline must be REGISTERED to make this call.");
-        _;
-    }
-    // require an airline is active in order to vote on registering an airline
-    modifier requireNominatingAirlineIsActive(address airlineAddress) {
-        require(airlines[airlineAddress].isActive, "Airline must be ACTIVE to make this call.");
-        _;
-    }
-    modifier requireLessThanOneEther(uint256 value){
-        require(value <= 1 ether, "Cannot insure for more than one ether.");
-        _;
-    }
+
 
     /********************************************************************************************/
     /*                                     SMART CONTRACT FUNCTIONS                             */
@@ -134,38 +103,42 @@ contract FlightSuretyApp {
     external
     requireIsOperational
     requireNominatingAirlineIsActive(msg.sender)
-    requireNominatedAirlineIsNotYetRegistered(airlineAddress)
+//    requireNominatedAirlineIsNotYetRegistered(airlineAddress)
 //    returns (bool success, uint256 votes) {
     returns (bool) {
-        require(!airlines[msg.sender].isRegistered, "Airline is already Registered.");
+        if (airlines[msg.sender].isActive != true){
+            return false;
+        }
+        if (airlines[msg.sender].isRegistered!= true){
+            return false;
+        }
         // check if it is already registered
-
-
         // no requirement to prevent an airline from voting twice,
         //but will not do this in the test anyway
         //        if (bAlreadyVoted == false) {
 
         //        }
 
+        bool bRegistered = false;
         // only do M of N if N > 4
         // M by the way is only to be greater than 50%
         if (activeAirlinesCount < 4) {
-            _registerAirline(airlineAddress);
+            bRegistered = _registerAirline(airlineAddress);
         }
         else {
+            // am assuming only one airline is being registered at a time
+            // yes, this is a hack so I can finish this, and so is a hack not having
+            // multisig built into a ethereum's core contract class definition
+
             mofnConsensusToRegisterAnAirline.push(msg.sender);
 
             if (mofnConsensusToRegisterAnAirline.length >= activeAirlinesCount / 2) {
                 // ok, majority has been reached
                 mofnConsensusToRegisterAnAirline = new address[](0);
-
-                _registerAirline(airlineAddress);
-                return true;
+                bRegistered = _registerAirline(airlineAddress);
             }
         }
-//        return (success, mofnConsensusToRegisterAnAirline.length);
-        return (false);
-
+        return bRegistered;
     }
 
     event RegisteredAirline(Airline airline);
@@ -187,8 +160,7 @@ contract FlightSuretyApp {
         airlines[newAirlineAddress] = newAirline;
         airlineAddresses.push(newAirlineAddress);
         emit RegisteredAirline(newAirline);
-
-        return (true);
+        return true;
     }
 
     function getRegisteredAirlines() external view returns (address[] memory){
@@ -205,22 +177,25 @@ contract FlightSuretyApp {
         return false;
     }
 
-    function fund()
-    external
+    function fundAirline()
+    public
     payable
     requireIsOperational
-    requireAirlineIsRegistered(msg.sender)
+    requireAirlineIsRegistered
     {
-        require(msg.value == 10 ether);
 
-        airlines[msg.sender].isFunded;
+        dataContract.fund(msg.sender, value);
+
         if (airlines[msg.sender].isRegistered) {
             airlines[msg.sender].isActive = true;
+            airlines[msg.sender].isFunded = true;
             activeAirlinesCount++;
         }
 
-        dataContract.fund{value : msg.value}(msg.sender);
-        emit FundedAirline(msg.sender, msg.value);
+//        emit FundedAirline(msg.sender, msg.value);
+    }
+    function isAirlineFunded(address airline) external view returns (bool){
+        return airlines[airline].isFunded;
     }
 
     function pay(address airlineAddress, string memory flight, uint256 timestamp) external {
@@ -230,7 +205,7 @@ contract FlightSuretyApp {
 
     function buyInsurance(address airlineAddress, string memory flight, uint256 timestamp)
     external payable
-    requireLessThanOneEther(msg.value) {
+    requireLessThanOrEqualToOneEther(msg.value) {
         bytes32 flightKey = getFlightKey(airlineAddress, flight, timestamp);
         dataContract.buyInsurance(airlineAddress, flightKey);
     }
@@ -255,7 +230,7 @@ contract FlightSuretyApp {
     // is it required that the airline is registered? Makes sense.
     function registerFlight(address airlineAddress, string memory flightName, uint256 timestamp) external
     requireIsOperational
-    requireAirlineIsRegistered(airlineAddress) {
+    requireAirlineIsRegisteredToRegisterAFlight(airlineAddress) {
         // do we check to see if the flight has already been registered?
         // not a requirement and also idempotent
         bytes32 flightKey = getFlightKey(airlineAddress, flightName, timestamp);
@@ -395,5 +370,40 @@ contract FlightSuretyApp {
         return random;
     }
 
-
+    modifier requireIsOperational()     {
+        // used on all state changing functions
+        // Modify to call data contract's status
+        require(operational == true, "Contract is currently not operational");
+        _;
+        // All modifiers require an "_" which indicates where the function body will be added
+    }
+    modifier requireContractOwner()    {
+        require(msg.sender == contractOwner, "Caller must be contract owner to make this call.");
+        _;
+    }
+    modifier requireNominatedAirlineIsNotYetRegistered(address airlineAddress) {
+        require(!airlines[airlineAddress].isRegistered, "Airline must not yet be REGISTERED.");
+        _;
+    }
+    modifier requireAirlineIsFunded(address airlineAddress) {
+        require(airlines[airlineAddress].isFunded, "Airline must be FUNDED to make this call.");
+        _;
+    }
+    modifier requireAirlineIsRegisteredToRegisterAFlight(address airlineAddress) {
+        require(airlines[airlineAddress].isRegistered, "Airline must be REGISTERED to REGISTER a FLIGHT.");
+        _;
+    }
+    modifier requireAirlineIsRegisteredToFund(address airlineAddress) {
+        require(airlines[airlineAddress].isRegistered, "Airline must be REGISTERED to FUND.");
+        _;
+    }
+    // require an airline is active in order to vote on registering an airline
+    modifier requireNominatingAirlineIsActive(address airlineAddress) {
+        require(airlines[airlineAddress].isActive, "Airline must be ACTIVE to make this call.");
+        _;
+    }
+    modifier requireLessThanOrEqualToOneEther(uint256 value){
+        require(value <= 1 ether, "Cannot insure for more than one ether.");
+        _;
+    }
 }

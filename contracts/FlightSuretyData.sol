@@ -102,7 +102,7 @@ contract FlightSuretyData {
 
     event Data_CloseInsurancePolicy(bytes32 flightKey);
     function closeInsurancePolicy(bytes32 flightKey) external
-    requireContractOwner
+//    requireContractOwner
     requireIsOperational {
 
         // close all policies for this flight
@@ -153,14 +153,14 @@ contract FlightSuretyData {
      * @dev How Airlines fund their participation.
     */
     event Data_FundingReceived(address airline, uint256 amount);
-    function fund(address airlineAddress) public payable
-    requireIsOperational {
+    function fund(address airlineAddress, uint256 amount) public payable
+        requireIsOperational
+    {
         // 10 eth is required but checked at interface of the App Contract, not here
         // as business rules may change
-        airlineFundingBalances[airlineAddress].add(msg.value);
-        emit Data_FundingReceived(airlineAddress, msg.value);
+        airlineFundingBalances[airlineAddress].add(amount);
+        emit Data_FundingReceived(airlineAddress, amount);
     }
-
 
 //    fallback() external payable {
 //        fund(msg.sender);
