@@ -1,0 +1,84 @@
+  ----------------------------------------------------------------------------------------
+  FundedAirline(0: 0x7629A1DF27f6aD91bb99Bee4A828917a96489666, 1: 10000000000000000000, __length__: 2, airlineAddress: 0x7629A1DF27f6aD91bb99Bee4A828917a96489666, amount: 10000000000000000000)
+    Data_FundingReceived(airline: 0x7629A1DF27f6aD91bb99Bee4A828917a96489666, amount: 10000000000000000000)
+    FundedAirline(airlineAddress: 0x7629A1DF27f6aD91bb99Bee4A828917a96489666, amount: 10000000000000000000)
+
+  FundedAirline(0: 0x7629A1DF27f6aD91bb99Bee4A828917a96489666, 1: 10000000000000000000, __length__: 2, airlineAddress: 0x7629A1DF27f6aD91bb99Bee4A828917a96489666, amount: 10000000000000000000)
+    Data_FundingReceived(airline: 0x7629A1DF27f6aD91bb99Bee4A828917a96489666, amount: 10000000000000000000)
+    FundedAirline(airlineAddress: 0x7629A1DF27f6aD91bb99Bee4A828917a96489666, amount: 10000000000000000000)
+  FundedAirline(0: 0x7629A1DF27f6aD91bb99Bee4A828917a96489666, 1: 10000000000000000000, __length__: 2, airlineAddress: 0x7629A1DF27f6aD91bb99Bee4A828917a96489666, amount: 10000000000000000000)
+    Data_FundingReceived(airline: 0x7629A1DF27f6aD91bb99Bee4A828917a96489666, amount: 10000000000000000000)
+    FundedAirline(airlineAddress: 0x7629A1DF27f6aD91bb99Bee4A828917a96489666, amount: 10000000000000000000)
+
+  1) Contract: Register Airlines with M of N Cases
+       Account 1 Register account 2:
+     AssertionError [ERR_ASSERTION] [ERR_ASSERTION]: Expected register to be successful due to airline having been funding
+      at Context.<anonymous> (test/testAirlineRegistration.js:17:16)
+      at processTicksAndRejections (node:internal/process/task_queues:96:5)
+
+  2) Contract: Register Airlines with M of N Cases
+       Account 1 Register account 3:
+     AssertionError [ERR_ASSERTION] [ERR_ASSERTION]: Expected register to be successful due to airline having been funding
+      at Context.<anonymous> (test/testAirlineRegistration.js:23:16)
+      at processTicksAndRejections (node:internal/process/task_queues:96:5)
+
+  3) Contract: Register Airlines with M of N Cases
+       Account 1 Register account 4:
+     AssertionError [ERR_ASSERTION] [ERR_ASSERTION]: Expected register to be successful due to airline having been funding
+      at Context.<anonymous> (test/testAirlineRegistration.js:30:16)
+      at processTicksAndRejections (node:internal/process/task_queues:96:5)
+
+  4) Contract: Register Airlines with M of N Cases
+       Account 1 Register account 5:
+     AssertionError [ERR_ASSERTION] [ERR_ASSERTION]: Expected register to be successful due to airline having been funding
+      at Context.<anonymous> (test/testAirlineRegistration.js:36:16)
+      at processTicksAndRejections (node:internal/process/task_queues:96:5)
+
+  5) Contract: Register Airlines with M of N Cases
+       Fund Account 2 to become ACTIVE:
+     AssertionError [ERR_ASSERTION] [ERR_ASSERTION]: Expected that funding would have been successful.
+      at Context.<anonymous> (test/testAirlineRegistration.js:49:16)
+      at processTicksAndRejections (node:internal/process/task_queues:96:5)
+
+  6) Contract: Register Airlines with M of N Cases
+       Fund Account 3 to become ACTIVE:
+     AssertionError [ERR_ASSERTION] [ERR_ASSERTION]: Expected that funding would have been successful.
+      at Context.<anonymous> (test/testAirlineRegistration.js:56:16)
+      at runMicrotasks (<anonymous>)
+      at processTicksAndRejections (node:internal/process/task_queues:96:5)
+
+  7) Contract: Register Airlines with M of N Cases
+       Fund Account 4 to become ACTIVE:
+     AssertionError [ERR_ASSERTION] [ERR_ASSERTION]: Expected that funding would have been successful.
+      at Context.<anonymous> (test/testAirlineRegistration.js:63:16)
+      at runMicrotasks (<anonymous>)
+      at processTicksAndRejections (node:internal/process/task_queues:96:5)
+
+  8) Contract: Register Airlines with M of N Cases
+       Account 2 Register account 5:
+     AssertionError [ERR_ASSERTION] [ERR_ASSERTION]: Expected register to be successful due to airline having been funding
+      at Context.<anonymous> (test/testAirlineRegistration.js:71:16)
+      at runMicrotasks (<anonymous>)
+      at processTicksAndRejections (node:internal/process/task_queues:96:5)
+
+  9) Contract: Register Airlines with M of N Cases
+       Account 3 Register account 5:
+     AssertionError [ERR_ASSERTION] [ERR_ASSERTION]: Expected register to be successful due to airline having been funding
+      at Context.<anonymous> (test/testAirlineRegistration.js:83:16)
+      at runMicrotasks (<anonymous>)
+      at processTicksAndRejections (node:internal/process/task_queues:96:5)
+
+  10) Contract: Register Airlines with M of N Cases
+       Account 5 should be registered:
+
+      AssertionError [ERR_ASSERTION] [ERR_ASSERTION]: Expected Account 5 not to be registered yet
+      + expected - actual
+
+      -false
+      +true
+
+      at Context.<anonymous> (test/testAirlineRegistration.js:88:16)
+      at runMicrotasks (<anonymous>)
+      at processTicksAndRejections (node:internal/process/task_queues:96:5)
+
+
