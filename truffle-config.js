@@ -6,36 +6,15 @@ var mnemonic = "any ranch rival torch true ahead salon engage guess hybrid left 
 module.exports = {
   networks: {
 
-/*
-    development: {
-
-      // host: "127.0.0.1",     // Localhost (default: none)
-
-      // port: 7545,            // Standard Ethereum port (default: none)
-
-      provider: function() {
-
-        return new Web3.providers.WebsocketProvider("ws://127.0.0.1:7545/");
-
-      },
-
-      gas: 6666666,
-
-      network_id: "*",       // Any network (default: none)
-
-      websockets: true
-
-    }
-*/
-
 
     development: {
       provider: function() {
         return new HDWalletProvider(mnemonic, "http://127.0.0.1:7545/", 0, 50);
         },
+        network_id: "*",       // Any network (default: none)
         host: "127.0.0.1",     // Localhost (default: none)
         port: 7545,            // Standard Ethereum port (default: none)
-        network_id: "*",       // Any network (default: none)
+        websockets: true
     }
 
   },

@@ -192,10 +192,17 @@ contract FlightSuretyApp {
             activeAirlinesCount++;
         }
 
-//        emit FundedAirline(msg.sender, msg.value);
+        emit FundedAirline(msg.sender, msg.value);
     }
     function isAirlineFunded(address airline) external view returns (bool){
-        return airlines[airline].isFunded;
+        if(airlines[airline].isFunded){
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function getAirlineFundLevel(address airlineAddress) public view returns (uint256){
+        return dataContract.getAirlineFundLevel(airlineAddress);
     }
 
     function pay(address airlineAddress, string memory flight, uint256 timestamp) external {

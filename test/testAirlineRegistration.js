@@ -10,16 +10,6 @@ contract('Register Airlines with M of N Cases', async (accounts) => {
         config = await Test.Config(accounts);
     });
 
-    it(`Account 1 Register account 2`, async function () {
-        let message = accounts[1] + " will try to register " + accounts[2];
-        console.log(message);
-
-        let result = await config.flightSuretyApp.registerAirline(accounts[2], {from:accounts[1]});
-        let status = result.toNumber();
-        console.log(message + ">>>Result is " + status);
-        truffleAssert.prettyPrintEmittedEvents(result, 2);
-        assert.equal(status, 1, "Expected register to be successful due to airline having been funding");
-    });
     it(`Account 1 Register account 3`, async function () {
         let message = accounts[1] + " will try to register " + accounts[3];
         console.log(message);

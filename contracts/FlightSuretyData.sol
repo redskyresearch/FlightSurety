@@ -161,6 +161,9 @@ contract FlightSuretyData {
         airlineFundingBalances[airlineAddress].add(amount);
         emit Data_FundingReceived(airlineAddress, amount);
     }
+    function getAirlineFundLevel(address airlineAddress) public view returns (uint256){
+        return airlineFundingBalances[airlineAddress];
+    }
 
 //    fallback() external payable {
 //        fund(msg.sender);
