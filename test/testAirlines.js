@@ -3,7 +3,7 @@ const Test = require('../config/testConfig.js');
 const assert = require("assert");
 
 
-contract('testAirlines', async (accounts) => {
+contract('testAirlineStuff', async (accounts) => {
 
     let config;
     before('setup contract', async () => {

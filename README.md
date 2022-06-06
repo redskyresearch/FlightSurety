@@ -3,8 +3,8 @@
 FlightSurety is a sample application project for Udacity's Blockchain course.
 
 Environment:
-node v16.13.0
-Truffle v5.4.29
+Node v16.13.0
+Truffle v5.0.2
 
 ##Status
 At the moment, I am stuck. I cannot register Oracles via server.js.  

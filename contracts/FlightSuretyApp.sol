@@ -149,7 +149,7 @@ contract FlightSuretyApp {
         // this requireOperational modifier doesn't feel right as it is an internal call
         // and should executed because the call has passed a previous modifier
         // so out it goes
-        // requireIsOperational
+        requireIsOperational
     returns (bool) {
         Airline memory newAirline = Airline
         ({airlineAddress : newAirlineAddress,
@@ -181,10 +181,10 @@ contract FlightSuretyApp {
     public
     payable
     requireIsOperational
-    requireAirlineIsRegistered
+    requireAirlineIsRegisteredToFund(msg.sender)
     {
 
-        dataContract.fund(msg.sender, value);
+        dataContract.fund(msg.sender, msg.value);
 
         if (airlines[msg.sender].isRegistered) {
             airlines[msg.sender].isActive = true;
@@ -375,7 +375,6 @@ contract FlightSuretyApp {
         // Modify to call data contract's status
         require(operational == true, "Contract is currently not operational");
         _;
-        // All modifiers require an "_" which indicates where the function body will be added
     }
     modifier requireContractOwner()    {
         require(msg.sender == contractOwner, "Caller must be contract owner to make this call.");
